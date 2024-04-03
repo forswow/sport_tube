@@ -1,12 +1,18 @@
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sport_tube/data/source/database/database.dart';
 
 import 'connection/connection.dart';
 part 'database_impl.g.dart';
 
+final dbPod = Provider<Database>(
+  (ref) => DatabaseHelperImpl('sporttube.db'),
+);
+
 @DriftDatabase(include: {'sql.drift'})
 class DatabaseHelperImpl extends _$DatabaseHelperImpl implements Database {
-  DatabaseHelperImpl() : super(connect(''));
+  final String dbName;
+  DatabaseHelperImpl(this.dbName) : super(connect(dbName));
 
   @override
   int get schemaVersion => 1;
