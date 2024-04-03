@@ -1,0 +1,27 @@
+CREATE TABLE Exercises (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name VARCHAR(255),
+    description TEXT,
+    type VARCHAR(50),
+    difficulty_level VARCHAR(50),
+    duration TIME,
+    repetitions INT,
+    sets INT
+);
+
+_getExercises:
+     SELECT * FROM Exercises;
+
+_getExercisesById:
+    SELECT * FROM Exercises
+    WHERE id = :id
+    LIMIT 1;
+
+_insertExercises:
+INSERT INTO Exercises (name, description, type, difficulty_level, duration, repetitions, sets)
+VALUES (:name, :description, :type, :difficulty_level, :duration, :repetitions, :sets);
+
+_updateExercises:
+    UPDATE Exercises
+    SET name = :name, description = :description, type = :type, difficulty_level = :difficulty_level, duration = :duration, repetitions = :repetitions, sets = :sets
+    WHERE id = :id;
