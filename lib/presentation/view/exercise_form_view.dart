@@ -69,7 +69,6 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
               if (didPop) {
                 return;
               }
-
               await ConfirmDialog.confirmDialog(context).then((confirm) {
                 if (confirm ?? false) {
                   Navigator.pop(context);
@@ -80,15 +79,17 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
               padding: const EdgeInsets.all(14.0),
               child: Column(
                 children: [
-                  InputField(
+                  InputField<String>(
                     label: 'Название упражнения',
                     initialValue: exercise.name,
                     onChanged: model.setTitle,
+                    keyboardType: TextInputType.text,
                   ),
-                  InputField.max(
+                  InputField<String>.max(
                     label: 'Описание',
                     initialValue: exercise.description,
                     onChanged: model.setDescription,
+                    keyboardType: TextInputType.text,
                   ),
                   AutocompleteField(
                     options: ExerciseTypeExtension.getNames(),
@@ -99,26 +100,45 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
                   AutocompleteField(
                     options: DifficultyLevelExtension.getNames(),
                     label: 'Уровень сложности',
+                    onSelected: model.setDifficultyLevel,
                     error: '',
                   ),
-                  const InputField(
+                  InputField<double>.decimel(
                     label: 'Продолжительность выполнения',
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    initialValue: exercise.duration,
+                    onChanged: model.setDuration,
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Рекомендуемое количество:'),
+                      const Text('Рекомендуемое количество:'),
                       Row(
                         children: [
                           //Рекомендуемое количество повторений
                           Expanded(
-                            child: InputField(
-                              label: 'повторений',
+                            child: Center(
+                              child: InputField<int>.numeric(
+                                label: 'повторений',
+                                initialValue: exercise.repetitions,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        signed: true),
+                                onChanged: model.setRepetitions,
+                              ),
                             ),
                           ),
                           Expanded(
-                            child: InputField(
-                              label: 'подходов',
+                            child: Center(
+                              child: InputField<int>.numeric(
+                                label: 'подходов',
+                                initialValue: exercise.sets,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        signed: true),
+                                onChanged: model.setSets,
+                              ),
                             ),
                           ),
                         ],

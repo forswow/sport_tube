@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 
-class InputField extends StatefulWidget {
+import 'package:sport_tube/presentation/widgets/decimal_field.dart';
+
+class InputField<T> extends StatefulWidget {
   const InputField({
     super.key,
     required this.label,
     this.initialValue,
     this.onChanged,
-  }) : maxLines = 1;
+    this.keyboardType,
+  })  : maxLines = 1,
+        isNumeric = false,
+        isDecimel = false;
 
   ///Расширяемый textfield
   const InputField.max({
@@ -14,23 +20,51 @@ class InputField extends StatefulWidget {
     required this.label,
     this.initialValue,
     this.onChanged,
-  }) : maxLines = null;
+    this.keyboardType,
+  })  : maxLines = null,
+        isNumeric = false,
+        isDecimel = false;
+  const InputField.numeric({
+    super.key,
+    required this.label,
+    this.initialValue,
+    this.onChanged,
+    this.keyboardType,
+  })  : maxLines = 1,
+        isNumeric = true,
+        isDecimel = false;
+  const InputField.decimel({
+    super.key,
+    required this.label,
+    this.initialValue,
+    this.onChanged,
+    this.keyboardType,
+  })  : maxLines = 1,
+        isNumeric = false,
+        isDecimel = true;
   final int? maxLines;
   final String label;
-  final String? initialValue;
-  final void Function(String)? onChanged;
+  final T? initialValue;
+  final ValueChanged<T>? onChanged;
+  final TextInputType? keyboardType;
+  final bool isNumeric;
+  final bool isDecimel;
   @override
-  State<InputField> createState() => _InputFieldState();
+  State<InputField<T>> createState() => _InputFieldState();
 }
 
-class _InputFieldState extends State<InputField> {
-  String? get initialValue => widget.initialValue;
+class _InputFieldState<T> extends State<InputField<T>> {
+  int? get maxLines => widget.maxLines;
+  TextInputType? get keyboardType => widget.keyboardType;
+  String get label => widget.label;
+  bool get isNumeric => widget.isNumeric;
+  bool get isDecimel => widget.isDecimel;
   late final TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(text: initialValue);
+    controller = TextEditingController(text: widget.initialValue as String?);
   }
 
   @override
@@ -41,15 +75,50 @@ class _InputFieldState extends State<InputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: TextFormField(
-      maxLines: widget.maxLines,
-      controller: controller,
-      decoration: InputDecoration(
-        label: Text(widget.label),
-        border: const OutlineInputBorder(),
-      ),
-      onChanged: widget.onChanged,
-    ));
+    final Widget child = isNumeric
+        ? Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Text(
+                    label,
+                  ),
+                ),
+                NumberPicker(
+                    value: (widget.initialValue as int?) ?? 0,
+                    minValue: 0,
+                    maxValue: 100,
+                    step: 1,
+                    // itemHeight: 60,
+                    itemWidth: 50,
+                    axis: Axis.horizontal,
+                    onChanged: (val) => widget.onChanged?.call(val as T),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.black26),
+                    )),
+              ],
+            ),
+          )
+        : isDecimel
+            ? DecimalField(
+                label: label,
+                value: (widget.initialValue as double?) ?? 0,
+                onChanged: (val) => widget.onChanged?.call(val as T),
+              )
+            : TextFormField(
+                maxLines: maxLines,
+                controller: controller,
+                keyboardType: keyboardType,
+                decoration: InputDecoration(
+                  label: Text(label),
+                  border: const OutlineInputBorder(),
+                ),
+                onChanged: (val) => widget.onChanged?.call(val as T),
+              );
+    return Card(child: child);
   }
 }
