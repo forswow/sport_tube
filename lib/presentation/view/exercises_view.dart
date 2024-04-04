@@ -17,24 +17,24 @@ class ExercisesView extends ConsumerWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2),
-            itemBuilder: (ctx, i) {
-              return const Card(
-                child: GridTile(child: Text('')),
-              );
-            }),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10),
+              itemCount: 5,
+              shrinkWrap: true,
+              itemBuilder: (ctx, i) {
+                return Card(child: Text('$i'));
+              }),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => const ExerciseFormView(
-                    exercise: Exercise,
-                  )));
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => const ExerciseFormView()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

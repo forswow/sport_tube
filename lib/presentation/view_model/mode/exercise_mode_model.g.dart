@@ -6,7 +6,7 @@ part of 'exercise_mode_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$exerciseModeModelHash() => r'1947926ddc7533cb5efa3bf0ac2b76a58d8fdbe2';
+String _$exerciseModeModelHash() => r'a502c767815bbb55971465c01f7ccf56c6b89aa3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,12 +30,14 @@ class _SystemHash {
 }
 
 abstract class _$ExerciseModeModel
-    extends BuildlessAutoDisposeNotifier<ModeData> {
-  late final Map<String, dynamic> exercise;
+    extends BuildlessAutoDisposeNotifier<(ModeData exercise, bool canPop)> {
+  late final ExerciseModel? exercise;
+  late final bool canPop;
 
-  ModeData build(
-    Map<String, dynamic> exercise,
-  );
+  (ModeData exercise, bool canPop) build(
+    ExerciseModel? exercise, {
+    bool canPop = false,
+  });
 }
 
 /// See also [ExerciseModeModel].
@@ -43,16 +45,18 @@ abstract class _$ExerciseModeModel
 const exerciseModeModelProvider = ExerciseModeModelFamily();
 
 /// See also [ExerciseModeModel].
-class ExerciseModeModelFamily extends Family<ModeData> {
+class ExerciseModeModelFamily extends Family<(ModeData exercise, bool canPop)> {
   /// See also [ExerciseModeModel].
   const ExerciseModeModelFamily();
 
   /// See also [ExerciseModeModel].
   ExerciseModeModelProvider call(
-    Map<String, dynamic> exercise,
-  ) {
+    ExerciseModel? exercise, {
+    bool canPop = false,
+  }) {
     return ExerciseModeModelProvider(
       exercise,
+      canPop: canPop,
     );
   }
 
@@ -62,6 +66,7 @@ class ExerciseModeModelFamily extends Family<ModeData> {
   ) {
     return call(
       provider.exercise,
+      canPop: provider.canPop,
     );
   }
 
@@ -81,13 +86,16 @@ class ExerciseModeModelFamily extends Family<ModeData> {
 }
 
 /// See also [ExerciseModeModel].
-class ExerciseModeModelProvider
-    extends AutoDisposeNotifierProviderImpl<ExerciseModeModel, ModeData> {
+class ExerciseModeModelProvider extends AutoDisposeNotifierProviderImpl<
+    ExerciseModeModel, (ModeData exercise, bool canPop)> {
   /// See also [ExerciseModeModel].
   ExerciseModeModelProvider(
-    Map<String, dynamic> exercise,
-  ) : this._internal(
-          () => ExerciseModeModel()..exercise = exercise,
+    ExerciseModel? exercise, {
+    bool canPop = false,
+  }) : this._internal(
+          () => ExerciseModeModel()
+            ..exercise = exercise
+            ..canPop = canPop,
           from: exerciseModeModelProvider,
           name: r'exerciseModeModelProvider',
           debugGetCreateSourceHash:
@@ -98,6 +106,7 @@ class ExerciseModeModelProvider
           allTransitiveDependencies:
               ExerciseModeModelFamily._allTransitiveDependencies,
           exercise: exercise,
+          canPop: canPop,
         );
 
   ExerciseModeModelProvider._internal(
@@ -108,16 +117,19 @@ class ExerciseModeModelProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.exercise,
+    required this.canPop,
   }) : super.internal();
 
-  final Map<String, dynamic> exercise;
+  final ExerciseModel? exercise;
+  final bool canPop;
 
   @override
-  ModeData runNotifierBuild(
+  (ModeData exercise, bool canPop) runNotifierBuild(
     covariant ExerciseModeModel notifier,
   ) {
     return notifier.build(
       exercise,
+      canPop: canPop,
     );
   }
 
@@ -126,50 +138,61 @@ class ExerciseModeModelProvider
     return ProviderOverride(
       origin: this,
       override: ExerciseModeModelProvider._internal(
-        () => create()..exercise = exercise,
+        () => create()
+          ..exercise = exercise
+          ..canPop = canPop,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         exercise: exercise,
+        canPop: canPop,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ExerciseModeModel, ModeData>
-      createElement() {
+  AutoDisposeNotifierProviderElement<ExerciseModeModel,
+      (ModeData exercise, bool canPop)> createElement() {
     return _ExerciseModeModelProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ExerciseModeModelProvider && other.exercise == exercise;
+    return other is ExerciseModeModelProvider &&
+        other.exercise == exercise &&
+        other.canPop == canPop;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, exercise.hashCode);
+    hash = _SystemHash.combine(hash, canPop.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin ExerciseModeModelRef on AutoDisposeNotifierProviderRef<ModeData> {
+mixin ExerciseModeModelRef
+    on AutoDisposeNotifierProviderRef<(ModeData exercise, bool canPop)> {
   /// The parameter `exercise` of this provider.
-  Map<String, dynamic> get exercise;
+  ExerciseModel? get exercise;
+
+  /// The parameter `canPop` of this provider.
+  bool get canPop;
 }
 
 class _ExerciseModeModelProviderElement
-    extends AutoDisposeNotifierProviderElement<ExerciseModeModel, ModeData>
-    with ExerciseModeModelRef {
+    extends AutoDisposeNotifierProviderElement<ExerciseModeModel,
+        (ModeData exercise, bool canPop)> with ExerciseModeModelRef {
   _ExerciseModeModelProviderElement(super.provider);
 
   @override
-  Map<String, dynamic> get exercise =>
-      (origin as ExerciseModeModelProvider).exercise;
+  ExerciseModel? get exercise => (origin as ExerciseModeModelProvider).exercise;
+  @override
+  bool get canPop => (origin as ExerciseModeModelProvider).canPop;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

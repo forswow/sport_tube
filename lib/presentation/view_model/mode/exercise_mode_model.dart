@@ -1,8 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sport_tube/data/source/database/database_impl.dart';
-import 'package:sport_tube/domain/enum/difficulty_level.dart';
-import 'package:sport_tube/domain/enum/exercise_type.dart';
 import 'package:sport_tube/domain/extensions/mode_extension.dart';
+import 'package:sport_tube/domain/model/exercise_model.dart';
 import 'package:sport_tube/presentation/view_model/exercise_view_model.dart';
 
 part 'exercise_mode_model.g.dart';
@@ -10,54 +9,45 @@ part 'exercise_mode_model.g.dart';
 @riverpod
 class ExerciseModeModel extends _$ExerciseModeModel {
   late final exerciseModel = ref.watch(exerciseViewModelProvider.notifier);
-  bool _edited = false;
+  // bool canPop = false;
   ModeData _data = {};
 
   bool get isNew => _data.id == null;
-  bool get isEdited => _edited;
+
   @override
-  ModeData build(ModeData exercise) => _data = exercise;
+  (ModeData exercise, bool canPop) build(
+          ExerciseModel? exercise, {bool canPop=false}) =>
+      (
+        _data = {
+          'id': exercise?.id,
+          'name': exercise?.name,
+          'description': exercise?.description,
+          'type': exercise?.type,
+          'difficulty_level': exercise?.difficultyLevel,
+          'duration': exercise?.duration,
+          'repetitions': exercise?.repetitions,
+          'sets': exercise?.sets,
+        },
+        canPop
+      );
 
-  void setTitle(String value) {
-    _data['name'] = value;
-    _edited = true;
-    state = _data;
-  }
+  void setTitle(String value) => _sets('name', value);
 
-  void setDescription(String value) {
-    _data['description'] = value;
-    _edited = true;
-    state = _data;
-  }
+  void setDescription(String value) => _sets('description', value);
 
-  void setType(ExerciseType type) {
-    _data['type'] = type.name;
-    _edited = true;
-    state = _data;
-  }
+  void setType(String type) => _sets('type', type);
 
-  void setDifficultyLevel(DifficultyLevel level) {
-    _data['difficultyLevel'] = level.name;
-    _edited = true;
-    state = _data;
-  }
+  void setDifficultyLevel(String level) => _sets('difficultyLevel', level);
 
-  void setDuration(double value) {
-    _data['duration'] = value;
-    _edited = true;
-    state = _data;
-  }
+  void setDuration(double value) => _sets('duration', value);
 
-  void setRepetitions(int value) {
-    _data['repetitions'] = value;
-    _edited = true;
-    state = _data;
-  }
+  void setRepetitions(int value) => _sets('repetitions', value);
 
-  void setSets(int value) {
-    _data['sets'] = value;
-    _edited = true;
-    state = _data;
+  void setSets(int value) => _sets('sets', value);
+
+  void _sets(String key, dynamic value) {
+    _data[key] = value;
+    state = (_data, true);
   }
 
   Future<void> createOrUpdate() {
