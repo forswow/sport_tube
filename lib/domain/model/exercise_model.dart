@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sport_tube/data/source/database/database_impl.dart';
+
 class ExerciseModel {
   final int id;
   final String? name;
@@ -67,7 +69,18 @@ class ExerciseModel {
       sets: map['sets']?.toInt(),
     );
   }
-
+  factory ExerciseModel.fromExercise(Exercise? exercise) {
+    return ExerciseModel(
+      id: exercise?.id??0,
+      name: exercise?.name,
+      description: exercise?.description,
+      type: exercise?.type,
+      difficultyLevel: exercise?.difficultyLevel,
+      duration: exercise?.duration,
+      repetitions: exercise?.repetitions,
+      sets: exercise?.sets,
+    );
+  }
   String toJson() => json.encode(toMap());
 
   factory ExerciseModel.fromJson(String source) =>

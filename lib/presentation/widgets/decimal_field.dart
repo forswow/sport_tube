@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:sport_tube/domain/extensions/format_double_extension.dart';
 
 class DecimalField extends StatelessWidget {
   const DecimalField({
@@ -58,6 +59,6 @@ class DecimalField extends StatelessWidget {
     final double decimalPart =
         (seconds ?? ((value - intValue) * 60).round()) / 60.0;
     final double newValue = (minute ?? intValue) + decimalPart;
-    onChanged.call(newValue);
+    onChanged.call(newValue.formatDouble());
   }
 }

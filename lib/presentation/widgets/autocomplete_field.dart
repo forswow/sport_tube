@@ -8,16 +8,19 @@ class AutocompleteField extends StatelessWidget {
       required this.options,
       required this.label,
       required this.error,
-      this.onSelected});
+      this.onSelected,
+      this.initialValue});
   final List<String> options;
   final String label;
   final String error;
   final void Function(String)? onSelected;
+  final String? initialValue;
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Autocomplete(
         onSelected: onSelected,
+        initialValue: TextEditingValue(text: initialValue ?? ''),
         fieldViewBuilder:
             (BuildContext context, controller, focusNode, onFieldSubmitted) =>
                 TextFormField(
@@ -35,15 +38,11 @@ class AutocompleteField extends StatelessWidget {
           onSelected: onSelected,
           options: options,
         ),
-        optionsBuilder: (TextEditingValue textEditingValue) {
-          // searchService.changeDestination(textEditingValue.text);
-          // _toController.text = textEditingValue.text;
-          return options
-              .where((option) => option
-                  .toLowerCase()
-                  .contains(textEditingValue.text.toLowerCase()))
-              .toList();
-        },
+        optionsBuilder: (TextEditingValue textEditingValue) => options
+            .where((option) => option
+                .toLowerCase()
+                .contains(textEditingValue.text.toLowerCase()))
+            .toList(),
         displayStringForOption: (option) => option.toString(),
       ),
     );

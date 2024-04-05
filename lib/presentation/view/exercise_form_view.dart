@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sport_tube/domain/enum/difficulty_level.dart';
+import 'package:sport_tube/domain/enum/exercise_type.dart';
 import 'package:sport_tube/domain/extensions/exercise_type_extension.dart';
 import 'package:sport_tube/domain/extensions/mode_extension.dart';
 import 'package:sport_tube/domain/model/exercise_model.dart';
@@ -18,8 +17,13 @@ import '../widgets/autocomplete_field.dart';
 import '../widgets/input_field.dart';
 
 class ExerciseFormView extends ConsumerStatefulWidget {
-  const ExerciseFormView({super.key, this.exercise});
+  const ExerciseFormView({
+    super.key,
+    this.exercise,
+    this.id,
+  });
   final ExerciseModel? exercise;
+  final int? id;
   @override
   ConsumerState<ExerciseFormView> createState() => _ExerciseFormViewState();
 }
@@ -27,7 +31,7 @@ class ExerciseFormView extends ConsumerStatefulWidget {
 class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
   final _formKey = GlobalKey<FormState>();
   late ExerciseModeModel model;
-  Timer? _debounce;
+
   @override
   void initState() {
     model = ref.read(exerciseModeModelProvider(widget.exercise).notifier);
@@ -44,26 +48,35 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
   }
 
   final debounce = Debouncer(milliseconds: 500);
+  
+
   @override
   Widget build(BuildContext context) {
     final (exercise, canPop) =
         ref.watch(exerciseModeModelProvider(widget.exercise));
     final title = widget.exercise?.name ?? 'Добавить упражнение';
     return GestureDetector(
+      key: ValueKey(widget.id),
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
           appBar: AppBar(
             title: Text(title),
             actions: [
               IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.save_outlined))
+                  onPressed: () async {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      await model
+                          .createOrUpdate()
+                          .then((value) => context.pop());
+                    }
+                  },
+                  icon: const Icon(Icons.save_outlined))
             ],
           ),
           body: SingleChildScrollView(
               child: Form(
-            onChanged: () {
-              debounce.run(() {});
-            },
+            key: _formKey,
+            // onChanged: () => debounce.run(() async => await _save()),
             canPop: !canPop,
             onPopInvoked: (didPop) async {
               if (didPop) {
@@ -95,12 +108,15 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
                     options: ExerciseTypeExtension.getNames(),
                     label: 'Тип упражнения',
                     error: '',
+                    initialValue: ExerciseTypeExtension.first(exercise.type),
                     onSelected: model.setType,
                   ),
                   AutocompleteField(
                     options: DifficultyLevelExtension.getNames(),
                     label: 'Уровень сложности',
                     onSelected: model.setDifficultyLevel,
+                    initialValue: DifficultyLevelExtension.first(
+                        exercise.difficultyLevel),
                     error: '',
                   ),
                   InputField<double>.decimel(

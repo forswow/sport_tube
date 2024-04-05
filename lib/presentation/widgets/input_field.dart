@@ -64,7 +64,7 @@ class _InputFieldState<T> extends State<InputField<T>> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(text: widget.initialValue as String?);
+    controller = TextEditingController(text: widget.initialValue?.toString());
   }
 
   @override
@@ -92,7 +92,6 @@ class _InputFieldState<T> extends State<InputField<T>> {
                     minValue: 0,
                     maxValue: 100,
                     step: 1,
-                    // itemHeight: 60,
                     itemWidth: 50,
                     axis: Axis.horizontal,
                     onChanged: (val) => widget.onChanged?.call(val as T),
