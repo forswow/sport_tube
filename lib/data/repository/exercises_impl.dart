@@ -34,20 +34,21 @@ class ExercisesRepositoryImpl extends _$ExercisesRepositoryImpl
 
   @override
   Future<void> updateExercise(int id,
-      {String? name,
-      String? description,
-      String? type,
-      String? difficultyLevel,
-      double? duration,
-      int? repetitions,
-      int? sets}) async => await database.updateExercises(
-        id: id,
-        exercise: ExercisesCompanion(
-            name: Value(name),
-            description: Value(description),
-            type: Value(type),
-            difficultyLevel: Value(difficultyLevel),
-            duration: Value(duration),
-            repetitions: Value(repetitions),
-            sets: Value(sets)));
+          {String? name,
+          String? description,
+          String? type,
+          String? difficultyLevel,
+          double? duration,
+          int? repetitions,
+          int? sets}) async =>
+      await database.updateExercises(
+          id: id,
+          exercise: ExercisesCompanion(
+              name: Value(name),
+              description: Value(description),
+              type: Value(type),
+              difficultyLevel: Value(difficultyLevel),
+              duration: Value(duration),
+              repetitions: Value(repetitions),
+              sets: Value(sets)));
 }

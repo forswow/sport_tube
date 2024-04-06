@@ -1,19 +1,19 @@
+import 'dart:developer';
+
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sport_tube/data/source/database/database.dart';
-
 import 'connection/connection.dart';
+
 part 'database_impl.g.dart';
 
-final dbPod = Provider<Database>(
-  (ref) => DatabaseHelperImpl('sporttube.db'),
-);
+final dbPod = Provider<Database>((ref) => DatabaseHelperImpl());
+
 
 @DriftDatabase(include: {'sql.drift'})
 class DatabaseHelperImpl extends _$DatabaseHelperImpl implements Database {
-  final String dbName;
-  DatabaseHelperImpl(this.dbName) : super(connect(dbName));
-
+  DatabaseHelperImpl() : super(connect());
+  DatabaseHelperImpl.forTesting(DatabaseConnection super.connection);
   @override
   int get schemaVersion => 1;
 
@@ -33,17 +33,23 @@ class DatabaseHelperImpl extends _$DatabaseHelperImpl implements Database {
 
   @override
   Future<Exercise> addExercise({required ExercisesCompanion exercise}) async {
-    final id = await transaction(() async => await _insertExercises(
-          exercise.name.value,
-          exercise.description.value,
-          exercise.type.value,
-          exercise.difficultyLevel.value,
-          exercise.duration.value,
-          exercise.repetitions.value,
-          exercise.sets.value,
-        ));
+    try {
+      final id = await transaction(() async => await _insertExercises(
+            exercise.name.value,
+            exercise.description.value,
+            exercise.type.value,
+            exercise.difficultyLevel.value,
+            exercise.duration.value,
+            exercise.repetitions.value,
+            exercise.sets.value,
+          ));
+      return _getExercisesById(id).getSingle();
+    } catch (e) {
+      log('err:$e');
+      throw e.toString();
+    }
 
-    return _getExercisesById(id).getSingle();
+    // return _getExercisesById(id).getSingle();
   }
 
   @override

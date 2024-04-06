@@ -12,7 +12,6 @@ part 'exercise_mode_model.g.dart';
 @riverpod
 class ExerciseModeModel extends _$ExerciseModeModel {
   late final exerciseModel = ref.watch(exerciseViewModelProvider.notifier);
-  // bool canPop = false;
   ModeData _data = {};
 
   bool get isNew => _data.id == null;

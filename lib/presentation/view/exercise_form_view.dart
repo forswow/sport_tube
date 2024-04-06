@@ -1,10 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sport_tube/domain/enum/difficulty_level.dart';
-import 'package:sport_tube/domain/enum/exercise_type.dart';
 import 'package:sport_tube/domain/extensions/exercise_type_extension.dart';
 import 'package:sport_tube/domain/extensions/mode_extension.dart';
 import 'package:sport_tube/domain/model/exercise_model.dart';
@@ -48,7 +44,6 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
   }
 
   final debounce = Debouncer(milliseconds: 500);
-  
 
   @override
   Widget build(BuildContext context) {
@@ -62,21 +57,22 @@ class _ExerciseFormViewState extends ConsumerState<ExerciseFormView> {
           appBar: AppBar(
             title: Text(title),
             actions: [
-              IconButton(
-                  onPressed: () async {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      await model
-                          .createOrUpdate()
-                          .then((value) => context.pop());
-                    }
-                  },
-                  icon: const Icon(Icons.save_outlined))
+              if (canPop) ...[
+                IconButton(
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        await model
+                            .createOrUpdate()
+                            .then((value) => context.pop());
+                      }
+                    },
+                    icon: const Icon(Icons.save_outlined))
+              ]
             ],
           ),
           body: SingleChildScrollView(
               child: Form(
             key: _formKey,
-            // onChanged: () => debounce.run(() async => await _save()),
             canPop: !canPop,
             onPopInvoked: (didPop) async {
               if (didPop) {
