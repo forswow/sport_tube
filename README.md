@@ -19,3 +19,6 @@
 
 Архитектура:
   - MVVM    
+
+
+![](https://github.com/forswow/sport_tube/blob/master/sport_tube.gif)
