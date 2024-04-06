@@ -18,4 +18,4 @@
    - build_runner
 
 Архитектура:
-    - MVVM    
+  - MVVM    
